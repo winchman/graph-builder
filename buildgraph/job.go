@@ -1,4 +1,4 @@
-package main
+package buildgraph
 
 type Credentials struct {
 	Username string
