@@ -1,4 +1,4 @@
-package main
+package buildgraph
 
 import (
 	"errors"
@@ -10,9 +10,14 @@ type Graph struct {
 	sort []*Job
 }
 
-func NewGraph(config string) (g *Graph, err error) {
+type Config struct {
+	Jobs []*Job `yaml:"blocks"`
+}
+
+func NewGraph(jobs []*Job) (g *Graph, err error) {
 	g = new(Graph)
-	g.Jobs = make([]*Job, 1)
+
+	g.Jobs = jobs
 
 	return g, nil
 }
@@ -24,15 +29,29 @@ func (g *Graph) Validate() bool {
 		return false
 	}
 	g.sort = sorted
+
 	return true
+}
+
+func (g *Graph) getDependants(j *Job) []*Job {
+	output := make([]*Job, 0)
+	for _, n := range g.Jobs {
+		for _, r := range n.Requires {
+			if r == j {
+				output = append(output, n)
+			}
+		}
+	}
+	return output
 }
 
 // http://en.wikipedia.org/wiki/Topological_sorting
 func (g *Graph) topologicalSort() (sorted []*Job, err error) {
-	sorted = make([]*Job, len(g.Jobs))
+	sorted = make([]*Job, 0)
 
 	tempMark := make(map[*Job]bool)
 	permMark := make(map[*Job]bool)
+	// Visit function to complete at each node in DFS
 	var visit func(*Job) error
 	visit = func(j *Job) error {
 		if tempMark[j] {
@@ -40,7 +59,7 @@ func (g *Graph) topologicalSort() (sorted []*Job, err error) {
 		}
 		if (!tempMark[j]) && (!permMark[j]) {
 			tempMark[j] = true
-			for _, n := range j.Requires {
+			for _, n := range g.getDependants(j) {
 				err := visit(n)
 				if err != nil {
 					return err
@@ -53,8 +72,9 @@ func (g *Graph) topologicalSort() (sorted []*Job, err error) {
 		return nil
 	}
 
+	// Complete for each node.
 	for _, n := range g.Jobs {
-		if permMark[n] == false {
+		if (!tempMark[n]) && (!permMark[n]) {
 			err := visit(n)
 			if err != nil {
 				return nil, err
