@@ -7,7 +7,8 @@ import (
 type Graph struct {
 	Jobs []*Job
 
-	sort []*Job
+	sort      []*Job
+	validated bool
 }
 
 type Config struct {
@@ -28,17 +29,50 @@ func NewGraph(jobs []*Job) (g *Graph, err error) {
 	return g, nil
 }
 
-// A Graph is valid iff it has a topological sort.
+// Validate returns true if the graph has a valid topological
+// sort. This ensures that the graph is a DAG. Doing this also means
+// that the graph has a sort that can be accessed later.
 func (g *Graph) Validate() bool {
 	sorted, err := g.topologicalSort()
 	if err != nil {
 		return false
 	}
+
 	g.sort = sorted
+	g.validated = true
 
 	return true
 }
 
+// GetDependants returns all dependant jobs for the given jobs. Note
+// that you must pass all prerequisite jobs, not just some of the
+// completed jobs. To get the initial list of jobs with no
+// dependancies, just pass an empty list.
+func (g *Graph) GetDependants(completedJobs []*Job) ([]*Job, error) {
+	output := make([]*Job, 0)
+	if !g.validated {
+		return output, errors.New("graph not sorted yet, call graph.Validate()")
+	}
+
+	completedMap := make(map[*Job]bool)
+	for _, j := range completedJobs {
+		completedMap[j] = true
+	}
+SortLoop:
+	for _, n := range g.sort {
+		for _, r := range n.Requires {
+			if !completedMap[r] {
+				break SortLoop
+			}
+		}
+		if !completedMap[n] {
+			output = append(output, n)
+		}
+	}
+	return output, nil
+}
+
+// getDependants returns all dependant jobs for a single job j.
 func (g *Graph) getDependants(j *Job) []*Job {
 	output := make([]*Job, 0)
 	for _, n := range g.Jobs {
@@ -51,7 +85,7 @@ func (g *Graph) getDependants(j *Job) []*Job {
 	return output
 }
 
-// http://en.wikipedia.org/wiki/Topological_sorting
+// Citation: http://en.wikipedia.org/wiki/Topological_sorting
 func (g *Graph) topologicalSort() (sorted []*Job, err error) {
 	sorted = make([]*Job, 0)
 
