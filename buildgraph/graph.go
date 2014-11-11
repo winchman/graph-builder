@@ -14,10 +14,16 @@ type Config struct {
 	Jobs []*Job `yaml:"blocks"`
 }
 
+// NewGraph accepts a list of Job structs and convert that into a Graph object.
+// If the resulting graph is not valid, an error is returned.
 func NewGraph(jobs []*Job) (g *Graph, err error) {
 	g = new(Graph)
 
 	g.Jobs = jobs
+
+	if !g.Validate() {
+		return g, errors.New("graph is invalid")
+	}
 
 	return g, nil
 }
