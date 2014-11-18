@@ -12,7 +12,7 @@ type PushInfo struct {
 
 type Job struct {
 	Name         string
-	Requires     []*Job
+	Requires     []*Job `yaml:"-"`
 	Dockerfile   string
 	ImageName    string
 	DisableCache bool
