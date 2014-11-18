@@ -72,8 +72,8 @@ SortLoop:
 	return output, nil
 }
 
-// getDependants returns all dependant jobs for a single job j.
-func (g *Graph) getDependants(j *Job) []*Job {
+// jobsDependantOnSingleJob returns all dependant jobs for a single job j.
+func (g *Graph) jobsDependantOnSingleJob(j *Job) []*Job {
 	output := make([]*Job, 0)
 	for _, n := range g.Jobs {
 		for _, r := range n.Requires {
@@ -99,7 +99,7 @@ func (g *Graph) topologicalSort() (sorted []*Job, err error) {
 		}
 		if (!tempMark[j]) && (!permMark[j]) {
 			tempMark[j] = true
-			for _, n := range g.getDependants(j) {
+			for _, n := range g.jobsDependantOnSingleJob(j) {
 				err := visit(n)
 				if err != nil {
 					return err
