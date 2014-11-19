@@ -1,0 +1,17 @@
+language: go
+sudo: false
+matrix:
+  fast_finish: true
+  allow_failures:
+  - go: tip
+go:
+- 1.2.2
+- 1.3.1
+- tip
+script:
+- make test
+after_success:
+- make goveralls
+env:
+  global:
+    secure: gUO/H3BOl30K8w9McsD1c0p/M9fkx0PPIdXk9UHjnphuSb+sNDrDpwHUhkTEVGp4ZiTU1taMqxiHOiSbedrT2136eF/bngXB8med7uiPaWt7be9Btm3lHKkfG4KaQ28LXMlv50w6LmAAjiUYw+74naQORxiSKvbRXj8exHzbNv0=
