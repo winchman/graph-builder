@@ -4,15 +4,12 @@ import (
 	"errors"
 )
 
+// Graph represents the dependancy graph of Jobs. Use NewGraph to construct one.
 type Graph struct {
 	Jobs []*Job
 
 	sort      []*Job
 	validated bool
-}
-
-type Config struct {
-	Jobs []*Job `yaml:"blocks"`
 }
 
 // NewGraph accepts a list of Job structs and convert that into a Graph object.
@@ -49,7 +46,8 @@ func (g *Graph) Validate() bool {
 // completed jobs. To get the initial list of jobs with no
 // dependancies, just pass an empty list.
 func (g *Graph) GetDependants(completedJobs []*Job) ([]*Job, error) {
-	output := make([]*Job, 0)
+	var output []*Job
+
 	if !g.validated {
 		return output, errors.New("graph not sorted yet, call graph.Validate()")
 	}
@@ -74,7 +72,8 @@ SortLoop:
 
 // jobsDependantOnSingleJob returns all dependant jobs for a single job j.
 func (g *Graph) jobsDependantOnSingleJob(j *Job) []*Job {
-	output := make([]*Job, 0)
+	var output []*Job
+
 	for _, n := range g.Jobs {
 		for _, r := range n.Requires {
 			if r == j {
