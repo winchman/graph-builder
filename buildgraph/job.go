@@ -17,7 +17,7 @@ type PushInfo struct {
 // Job is the basic unit of computation in the graph. It must have a unique name.
 type Job struct {
 	Name         string
-	Requires     []*Job
+	Requires     []*Job `yaml:"-"`
 	Dockerfile   string
 	ImageName    string
 	DisableCache bool
