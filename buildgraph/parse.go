@@ -25,6 +25,9 @@ func uniqueStrings(strings []string) bool {
 	return true
 }
 
+// ParseGraphFromYAML takes a YAML document describing a set of jobs
+// to execute. It returns a graph parsed from that config. Note that
+// Job names must be unique and no cycles can exist in the graph.
 func ParseGraphFromYAML(input []byte) (g *Graph, err error) {
 	config := configDocument{}
 

@@ -42,12 +42,8 @@ func TestInvalidGraph(test *testing.T) {
 	}
 	d.Requires = []*buildgraph.Job{&e}
 	invalidJobs := []*buildgraph.Job{&d, &e}
-	graph, err := buildgraph.NewGraph(invalidJobs)
-	if err != nil {
-		test.Error(err)
-	}
-
-	if graph.Validate() {
+	_, err := buildgraph.NewGraph(invalidJobs)
+	if err == nil {
 		test.Fail()
 	}
 }
