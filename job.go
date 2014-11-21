@@ -22,6 +22,6 @@ type Job struct {
 	ImageName    string `yaml:"image_name"`
 	DisableCache bool   `yaml:"disable_cache"`
 	SkipPush     bool   `yaml:"skip_push"`
-	Tags         string
+	Tags         []string
 	PushInfo     PushInfo `yaml:"push_info"`
 }

@@ -3,7 +3,8 @@ blocks:
     skip_push: true
     disable_cache: true
   - name: block-B
-    requires: block-A
+    requires:
+      - block-A
     disable_cache: true
     tags:
       - latest
