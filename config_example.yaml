@@ -1,0 +1,14 @@
+blocks:
+  - name: block-A
+    skip_push: true
+    disable_cache: true
+  - name: block-B
+    requires: block-A
+    disable_cache: true
+    tags:
+      - latest
+    push_info:
+      image: quay.io/namespace/repo:latest
+      credentials:
+        username: fakeuser
+        password: fakepass
