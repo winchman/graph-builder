@@ -3,7 +3,7 @@ package buildgraph_test
 import (
 	"testing"
 
-	"github.com/sylphon/graph-builder/buildgraph"
+	buildgraph "github.com/sylphon/graph-builder"
 )
 
 func TestValidGraph(test *testing.T) {
