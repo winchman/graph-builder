@@ -19,9 +19,9 @@ type Job struct {
 	Name         string
 	Requires     []*Job `yaml:"-"`
 	Dockerfile   string
-	ImageName    string
-	DisableCache bool
-	SkipPush     bool
-	Tags         string
-	PushInfo     PushInfo
+	ImageName    string `yaml:"image_name"`
+	DisableCache bool   `yaml:"disable_cache"`
+	SkipPush     bool   `yaml:"skip_push"`
+	Tags         []string
+	PushInfo     PushInfo `yaml:"push_info"`
 }
