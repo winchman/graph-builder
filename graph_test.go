@@ -193,3 +193,24 @@ func TestGetDependantsWithFailSuccessJob(test *testing.T) {
 		test.Fail()
 	}
 }
+
+func TestGetDependantsWithNonValidatedGraph(test *testing.T) {
+	// a -> b
+	a := buildgraph.Job{
+		Name: "Block-A",
+	}
+	b := buildgraph.Job{
+		Name:     "Block-B",
+		Requires: []*buildgraph.Job{&a},
+	}
+	validJobs := []*buildgraph.Job{&a, &b}
+
+	graph := buildgraph.Graph{Jobs: validJobs}
+
+	successJobs := []*buildgraph.Job{&a}
+	failedJobs := []*buildgraph.Job{&a}
+	_, err := graph.GetDependants(successJobs, failedJobs)
+	if err == nil {
+		test.Fail()
+	}
+}
