@@ -18,6 +18,12 @@ blocks:
       - block-B
 `
 
+const invalidYAMLConfig = `
+blocks:
+  * name: block-A
+  * name: block-B
+`
+
 const cycleConfig = `
 blocks:
   - name: block-A
@@ -146,6 +152,13 @@ func TestParseGraphExampleYAML(test *testing.T) {
 		b.PushInfo.Image != "quay.io/namespace/repo:latest" ||
 		b.PushInfo.Credentials.Username != "fakeuser" ||
 		b.PushInfo.Credentials.Password != "fakepass" {
+		test.Fail()
+	}
+}
+
+func TestParseGraphInvalidYAML(test *testing.T) {
+	_, err := buildgraph.ParseGraphFromYAML([]byte(invalidYAMLConfig))
+	if err == nil {
 		test.Fail()
 	}
 }
