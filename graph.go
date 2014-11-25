@@ -41,29 +41,39 @@ func (g *Graph) Validate() bool {
 	return true
 }
 
-// GetDependants returns all dependant jobs for the given jobs. Note
+// GetDependants returns all dependant jobs for the given jobs. The
+// jobs should be passed with the first argument being a list of
+// successful jobs and the second being a list of failed job. Note
 // that you must pass all prerequisite jobs, not just some of the
 // completed jobs. To get the initial list of jobs with no
-// dependancies, just pass an empty list.
-func (g *Graph) GetDependants(completedJobs []*Job) ([]*Job, error) {
+// dependancies, just pass empty lists as arguments.
+func (g *Graph) GetDependants(succededJobs, failedJobs []*Job) ([]*Job, error) {
 	var output []*Job
 
 	if !g.validated {
 		return output, errors.New("graph not sorted yet, call graph.Validate()")
 	}
 
-	completedMap := make(map[*Job]bool)
-	for _, j := range completedJobs {
-		completedMap[j] = true
+	successful := make(map[*Job]bool)
+	for _, j := range succededJobs {
+		successful[j] = true
 	}
+	failed := make(map[*Job]bool)
+	for _, j := range failedJobs {
+		failed[j] = true
+		if successful[j] {
+			return output, errors.New("A job cannot be both successful and failed!")
+		}
+	}
+
 SortLoop:
 	for _, n := range g.sort {
-		for _, r := range n.Requires {
-			if !completedMap[r] {
-				break SortLoop
+		if !successful[n] && !failed[n] {
+			for _, r := range n.Requires {
+				if !successful[r] || failed[r] {
+					continue SortLoop
+				}
 			}
-		}
-		if !completedMap[n] {
 			output = append(output, n)
 		}
 	}
