@@ -67,7 +67,6 @@ blocks:
 const exampleConfig = `
 blocks:
   - name: block-A
-    skip_push: true
     disable_cache: true
   - name: block-B
     requires:
@@ -75,6 +74,7 @@ blocks:
     disable_cache: true
     tags:
       - latest
+    push_image: true
     push_info:
       image: quay.io/namespace/repo:latest
       credentials:
@@ -139,7 +139,6 @@ func TestParseGraphExampleYAML(test *testing.T) {
 	a := graph.Jobs[0]
 	b := graph.Jobs[1]
 	if a.Name != "block-A" ||
-		a.SkipPush != true ||
 		a.DisableCache != true {
 		test.Fail()
 	}
@@ -149,6 +148,7 @@ func TestParseGraphExampleYAML(test *testing.T) {
 		len(b.Tags) != 1 ||
 		b.Tags[0] != "latest" ||
 		b.DisableCache != true ||
+		b.PushImage != true ||
 		b.PushInfo.Image != "quay.io/namespace/repo:latest" ||
 		b.PushInfo.Credentials.Username != "fakeuser" ||
 		b.PushInfo.Credentials.Password != "fakepass" {

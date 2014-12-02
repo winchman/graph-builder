@@ -1,6 +1,5 @@
 blocks:
   - name: block-A
-    skip_push: true
     disable_cache: true
   - name: block-B
     requires:
@@ -8,6 +7,7 @@ blocks:
     disable_cache: true
     tags:
       - latest
+    push_image: true
     push_info:
       image: quay.io/namespace/repo:latest
       credentials:

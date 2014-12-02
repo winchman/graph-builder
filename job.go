@@ -21,7 +21,7 @@ type Job struct {
 	Dockerfile   string
 	ImageName    string `yaml:"image_name"`
 	DisableCache bool   `yaml:"disable_cache"`
-	SkipPush     bool   `yaml:"skip_push"`
+	PushImage    bool   `yaml:"push_image"`
 	Tags         []string
 	PushInfo     PushInfo `yaml:"push_info"`
 }
